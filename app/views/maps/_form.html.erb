@@ -1,0 +1,69 @@
+<%= form_for @map, :html => { :class => "form-horizontal map" } do |f| %>
+
+  <% if @map.errors.any? %>
+    <div id="error_expl" class="panel panel-danger">
+      <div class="panel-heading">
+        <h3 class="panel-title"><%= pluralize(@map.errors.count, "error") %> prohibited this map from being saved:</h3>
+      </div>
+      <div class="panel-body">
+        <ul>
+        <% @map.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+        </ul>
+      </div>
+    </div>
+  <% end %>
+
+  <div class="form-group">
+    <%= f.label :name, :class => 'control-label col-lg-2' %>
+    <div class="col-lg-10">
+      <%= f.text_field :name, :class => 'form-control' %>
+    </div>
+    <%=f.error_span(:name) %>
+  </div>
+  
+  <div class="form-group">  
+    <% if @images.exists? %>
+      <%= f.label :map_image, :class => 'control-label col-lg-2'  %>
+        <div class="col-lg-10">
+          <% @images.each do |p| %>
+                <div class="form-control">
+                  <%= image_tag p.image_url, :class => 'form-control-image' %>
+
+                <%= link_to '<i class="fa fa-edit"></i>'.html_safe,
+                      edit_image_path(p), :class => 'form-control-button', 
+                      :title => 'Edit Attachment'  %>
+                <%#= link_to "Destroy Attachment", destroy_image_path(p) %>
+                <%#= link_to '<i class="fa fa-remove"></i>'.html_safe,
+                      image_path(p),
+                      :method => 'delete',
+                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+                      :class => 'form-control-button', :title => 'Delete Attachment'  %>
+                </div>
+                
+          <% end %>
+        </div>
+    
+    <% else %>  
+      <%#= f.fields_for :images do |p| %>
+         <%= f.label :map_image, :class => 'control-label col-lg-2'  %>
+         <div class="col-lg-10">
+         <%= f.file_field :image, :multiple => true, name: "images[image][]", :class => 'form-control' %>
+
+         </div>
+     <%# end %>
+    <% end %>
+  </div>  
+  
+  
+
+  <div class="form-group">
+    <div class="col-lg-offset-2 col-lg-10">
+      <%= f.submit nil, :class => 'btn btn-primary' %>
+      <%= link_to t('.cancel', :default => t("helpers.links.cancel")),
+                maps_path, :class => 'btn btn-default' %>
+    </div>
+  </div>
+
+<% end %>
