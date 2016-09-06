@@ -52,6 +52,25 @@
             <li><%= link_to "Link2", "/path2"  %></li>
             <li><%= link_to "Link3", "/path3"  %></li>
           </ul>
+          <ul class="nav navbar-right col-md-4">
+            <% if current_user %>
+              <li class="col-md-8 user-name">
+              <%= link_to ('<i class="fa fa-user branded-orange"></i> <span class="branded-orange">' + truncate(current_user.email, length: 25)).html_safe,
+              edit_user_registration_path, title: 'Edit Profile' %>
+              </li>
+              <li class="col-md-1"> </li>
+              <li class="col-md-3 logout"><%= link_to('Logout', destroy_user_session_path,
+              class: 'btn btn-xs btn-danger btn-danger-altered', title: 'Logout', :method => :delete) %></li>
+            <% else %>
+              <li class="col-md-4 pull-right">
+              <%- if controller_name == 'sessions' %>
+                <div style="height:41px;clear:both;margin-top:5%;margin-bottom:5%;"></div>
+              <% else %>
+              <%= link_to('Sign In', new_user_session_path, class: 'btn btn-primary btn-primary-altered', title: 'Sign In') %>
+              <% end %>
+              </li>
+            <% end %>
+          </ul>
         </div>
       </div>
     </div>
