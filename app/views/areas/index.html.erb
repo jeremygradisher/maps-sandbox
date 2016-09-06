@@ -1,4 +1,110 @@
 <%- model_class = Area -%>
+
+<h1>Because of the changes I made - this is no longer functioning properly. You want to be here: <%= link_to "Maps First Try", maps_path  %></h1>
+
+<hr>
+
+<h3>Here the map exists - The map is added one time manually.</h3>
+<p>I can currently get all of the markers to show on the index page, and the individual marker to show on the show page.</p>
+
+<div id='map' style="height:500px;"></div>
+
+
+<script>
+	//A Leaflet map has one CRS (and one CRS only), that can be changed when creating the map. 
+	//For our game map we’ll use CRS.Simple, which represents a square grid:
+	//In a CRS.Simple, one horizontal map unit is mapped to one horizontal pixel, 
+	//and idem with vertical. This means that the whole map is about 1000x1000 pixels 
+	//big and won’t fit in our HTML container. Luckily, we can set minZoom to values 
+	//lower than zero:
+
+	var map = L.map('map', {
+		crs: L.CRS.Simple,
+		minZoom: -3
+	});
+
+	//If working with [y, x] coordinates with something named L.LatLng doesn’t make much sense to you, 
+	//you can easily create wrappers for them:
+	var yx = L.latLng;
+
+	var xy = function(x, y) {
+		if (L.Util.isArray(x)) {    // When doing xy([x, y]);
+			return yx(x[1], x[0]);
+		}
+		return yx(y, x);  // When doing xy(x, y);
+	};
+	//Now we can add a few stars and even a navigation line with [x, y] coordinates! (Shown down the page a bit)
+
+	//Then we can just add a L.ImageOverlay with the starmap image and its approximate bounds:
+	//In this case, the map covers more than 1000x1000 units, but the image is 2315x2315 pixels big
+	//Different cases will call for one pixel = one map unit, or 64 pixels = one map unit, or anything. 
+	//Think in map units in a grid, and then add your layers (L.ImageOverlays, L.Markers and so on) accordingly.
+	//var bounds = [xy(-25, -26.5), xy(1023, 1021.5)];
+	//var bounds = [[0,0], [753,1000]];
+	var bounds = [xy(0,0), xy(1000,753)];
+	var image = L.imageOverlay('/images/demo-lease-plan.png', bounds).addTo(map);
+
+	//add some markers
+	//var suite401      = yx(604, 107);
+	//var suiteJ1      = yx(568, 275);
+	//var suiteJ2      = yx(560, 579);
+	//var sol      = xy(175.2, 145.0);
+	//var mizar    = xy( 41.6, 130.1);
+	//var kruegerZ = xy( 13.4,  56.5);
+	//var deneb    = xy(218.7,   8.3);
+	
+	//You’ll notice that Sol is at coordinates [145,175] instead of [175,145], 
+	//and the same happens with the map center. Coordinates in CRS.Simple take the form of [y, x] instead of [x, y], 
+	//in the same way Leaflet uses [lat, lng] instead of [lng, lat].
+	
+	//(In technical terms, Leaflet prefers to use [northing, easting] over [easting, northing] - 
+	//the first coordinate in a coordinate pair points “north” and the second points “east”)
+
+	//L.marker(suite401).addTo(map).bindPopup('Suite 401');
+	//L.marker(suiteJ1).addTo(map).bindPopup('Suite J-1');
+	//L.marker(suiteJ2).addTo(map).bindPopup('Suite J-2');
+	//L.marker(     sol).addTo(map).bindPopup(      'Sol');
+	//L.marker(   mizar).addTo(map).bindPopup(    'Mizar');
+	//L.marker(kruegerZ).addTo(map).bindPopup('Krueger-Z');
+	//L.marker(   deneb).addTo(map).bindPopup(    'Deneb');
+
+	//var travel = L.polyline([sol, deneb]).addTo(map);
+	
+  
+
+	//map.setView(xy(120, 70), 1);
+    map.fitBounds(bounds);
+
+	//var marker = L.marker([598, 117]).addTo(mymap);
+	
+	//marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+
+    var popup = L.popup();
+    
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(map);
+    }
+    
+    map.on('click', onMapClick);
+</script>
+
+<script>
+<% @areas.each do |area| %>
+var <%= area.name %>      = yx(<%= area.coords %>);
+L.marker(<%= area.name %>).addTo(map).bindPopup('<h3><%= area.name %> - <%= area.status %></h3><p><%= area.info %></p>');
+<% end %>
+</script>
+
+<br style="clear:both;">
+
+<p style="">Here I can add new areas. It asks for a name, info, status and coords. 
+Overall this method would allow you to add one image map and many areas. 
+It is a first step but will not be enough...</p>
+
+
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
 </div>
@@ -7,6 +113,7 @@
     <tr>
       <th><%= model_class.human_attribute_name(:id) %></th>
       <th><%= model_class.human_attribute_name(:name) %></th>
+      <th><%= model_class.human_attribute_name(:map_id) %></th>
       <th><%= model_class.human_attribute_name(:info) %></th>
       <th><%= model_class.human_attribute_name(:status) %></th>
       <th><%= model_class.human_attribute_name(:coords) %></th>
@@ -18,12 +125,15 @@
     <% @areas.each do |area| %>
       <tr>
         <td><%= link_to area.id, area_path(area) %></td>
-        <td><%= area.name %></td>
+        <td><%= link_to area.name, area_path(area) %></td>
+        <td><%= area.map_id %></td>
         <td><%= area.info %></td>
         <td><%= area.status %></td>
         <td><%= area.coords %></td>
         <td><%=l area.created_at %></td>
         <td>
+          <%= link_to t('.view', :default => t("helpers.links.view")),
+                      area_path(area), :class => 'btn btn-default btn-xs' %>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),
                       edit_area_path(area), :class => 'btn btn-default btn-xs' %>
           <%= link_to t('.destroy', :default => t("helpers.links.destroy")),
@@ -40,3 +150,5 @@
 <%= link_to t('.new', :default => t("helpers.links.new")),
             new_area_path,
             :class => 'btn btn-primary' %>
+
+<br><br><br>

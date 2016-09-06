@@ -10,15 +10,28 @@ class AreasController < ApplicationController
   # GET /areas/1
   # GET /areas/1.json
   def show
+    
+    @map = Map.find(@area.map_id)
+    #added this so I can get the image to be used as the map
+    @image = @map.images.first
+    @images = @map.images.all
   end
 
   # GET /areas/new
   def new
     @area = Area.new
+    #testing:
+    @map = Map.find(params[:map_id])
+    @image = @map.images.first
+    @images = @map.images.all
   end
 
   # GET /areas/1/edit
   def edit
+    @map = Map.find(@area.map_id)
+    #added this so I can get the image to be used as the map
+    @image = @map.images.first
+    @images = @map.images.all
   end
 
   # POST /areas
@@ -69,6 +82,6 @@ class AreasController < ApplicationController
 
     # Never trust parameters from the scary internet, only allow the white list through.
     def area_params
-      params.require(:area).permit(:name, :info, :status, :coords)
+      params.require(:area).permit(:name, :map_id, :info, :status, :coords)
     end
 end

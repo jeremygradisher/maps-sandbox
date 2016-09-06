@@ -29,7 +29,7 @@
     <div class="col-lg-2">
       <%#= f.select :map_id, ['Prospect', 'In Process', 'Complete'], {include_blank:false}, :class => 'form-control' %>
       <%#= collection_select(:area, :map_id, Map.all, :id, :name) %>
-      <%= f.text_field :map_id, :class => 'form-control' %>
+      <%= f.text_field :map_id, value: params[:map_id], :class => 'form-control' %>
     </div>
     <%=f.error_span(:map_id) %>
   </div>
@@ -49,6 +49,7 @@
     </div>
     <%=f.error_span(:status) %>
   </div>
+  
   <div class="form-group" style="display:none;">
     <%= f.label :coords, :class => 'control-label col-lg-2' %>
     <div class="col-lg-10">

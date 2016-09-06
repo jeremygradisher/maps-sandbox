@@ -1,14 +1,20 @@
 <%- model_class = Map -%>
+
+<p>*Maps#index - Here you can add new Maps. Very simple to use. Select the map you want to upload and name it.<br><br>
+**If you click into one of the existing maps you see a live rendering of the Map with the Area markers on it! You then
+have options to edit and/or add other Areas.
+</p>
+
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.pluralize.titleize %></h1>
 </div>
+
 <table class="table table-striped">
   <thead>
     <tr>
       <th><%= model_class.human_attribute_name(:id) %></th>
+      <th><%= model_class.human_attribute_name(:map) %></th>
       <th><%= model_class.human_attribute_name(:name) %></th>
-      <th><%= model_class.human_attribute_name(:width) %></th>
-      <th><%= model_class.human_attribute_name(:height) %></th>
       <th><%= model_class.human_attribute_name(:created_at) %></th>
       <th><%=t '.actions', :default => t("helpers.actions") %></th>
     </tr>
@@ -17,9 +23,12 @@
     <% @maps.each do |map| %>
       <tr>
         <td><%= link_to map.id, map_path(map) %></td>
+        <td>
+          <% map.images.each do |p| %>
+            <%= link_to image_tag(p.image_url, :style => 'max-width:50px;padding:2px;'), map_path(map) %>
+          <% end %>
+        </td>
         <td><%= map.name %></td>
-        <td><%= map.width %></td>
-        <td><%= map.height %></td>
         <td><%=l map.created_at %></td>
         <td>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),
@@ -35,6 +44,6 @@
   </tbody>
 </table>
 
-<%= link_to t('.new', :default => t("helpers.links.new")),
+<%= link_to 'New Image Map =>',
             new_map_path,
             :class => 'btn btn-primary' %>

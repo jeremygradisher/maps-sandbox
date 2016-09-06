@@ -1,4 +1,128 @@
 <%- model_class = Area -%>
+
+
+
+<div id='map' style="height:500px;"></div>
+
+
+<script>
+	//A Leaflet map has one CRS (and one CRS only), that can be changed when creating the map. 
+	//For our game map we’ll use CRS.Simple, which represents a square grid:
+	//In a CRS.Simple, one horizontal map unit is mapped to one horizontal pixel, 
+	//and idem with vertical. This means that the whole map is about 1000x1000 pixels 
+	//big and won’t fit in our HTML container. Luckily, we can set minZoom to values 
+	//lower than zero:
+
+	var map = L.map('map', {
+		crs: L.CRS.Simple,
+		minZoom: -3
+	});
+
+	//If working with [y, x] coordinates with something named L.LatLng doesn’t make much sense to you, 
+	//you can easily create wrappers for them:
+	var yx = L.latLng;
+
+	var xy = function(x, y) {
+		if (L.Util.isArray(x)) {    // When doing xy([x, y]);
+			return yx(x[1], x[0]);
+		}
+		return yx(y, x);  // When doing xy(x, y);
+	};
+	//Now we can add a few stars and even a navigation line with [x, y] coordinates! (Shown down the page a bit)
+
+	//Then we can just add a L.ImageOverlay with the starmap image and its approximate bounds:
+	//In this case, the map covers more than 1000x1000 units, but the image is 2315x2315 pixels big
+	//Different cases will call for one pixel = one map unit, or 64 pixels = one map unit, or anything. 
+	//Think in map units in a grid, and then add your layers (L.ImageOverlays, L.Markers and so on) accordingly.
+	//var bounds = [xy(-25, -26.5), xy(1023, 1021.5)];
+	//var bounds = [[0,0], [753,1000]];
+	//var bounds = [xy(0,0), xy(1000,753)];
+	//var bounds = [xy(0,0), xy(<%#= @map.width %>,<%#= @map.height %>)];
+	var bounds = [xy(0,0), xy(<%= @image.width %>,<%= @image.height %>)];
+	//var image = L.imageOverlay('/images/demo-lease-plan.png', bounds).addTo(map);
+	var image = L.imageOverlay('<%= @image.image_url %>', bounds).addTo(map);
+
+	//add some markers
+	//var suite401      = yx(604, 107);
+	//var suiteJ1      = yx(568, 275);
+	//var suiteJ2      = yx(560, 579);
+	//var sol      = xy(175.2, 145.0);
+	//var mizar    = xy( 41.6, 130.1);
+	//var kruegerZ = xy( 13.4,  56.5);
+	//var deneb    = xy(218.7,   8.3);
+	
+	//You’ll notice that Sol is at coordinates [145,175] instead of [175,145], 
+	//and the same happens with the map center. Coordinates in CRS.Simple take the form of [y, x] instead of [x, y], 
+	//in the same way Leaflet uses [lat, lng] instead of [lng, lat].
+	
+	//(In technical terms, Leaflet prefers to use [northing, easting] over [easting, northing] - 
+	//the first coordinate in a coordinate pair points “north” and the second points “east”)
+
+	//L.marker(suite401).addTo(map).bindPopup('Suite 401');
+	//L.marker(suiteJ1).addTo(map).bindPopup('Suite J-1');
+	//L.marker(suiteJ2).addTo(map).bindPopup('Suite J-2');
+	//L.marker(     sol).addTo(map).bindPopup(      'Sol');
+	//L.marker(   mizar).addTo(map).bindPopup(    'Mizar');
+	//L.marker(kruegerZ).addTo(map).bindPopup('Krueger-Z');
+	//L.marker(   deneb).addTo(map).bindPopup(    'Deneb');
+
+	//var travel = L.polyline([sol, deneb]).addTo(map);
+
+	//map.setView(xy(120, 70), 1);
+    map.fitBounds(bounds);
+
+	//var marker = L.marker([598, 117]).addTo(mymap);
+	
+	//marker.bindPopup("<b>Hello world!</b><br>I am a popup.").openPopup();
+
+    var popup = L.popup();
+    
+    function onMapClick(e) {
+        popup
+            .setLatLng(e.latlng)
+            .setContent("You clicked the map at " + e.latlng.toString())
+            .openOn(map);
+    }
+    
+    map.on('click', onMapClick);
+</script>
+
+<script>
+	//Let’s define our own icon class containing the shared options, 
+    //inheriting from L.Icon! It’s really easy in Leaflet:
+    var mapIcon = L.Icon.extend({
+			options: {
+				shadowUrl: '/images/marker-shadow.png',
+				iconSize:     [30, 45], // size of the icon
+                shadowSize:   [41, 41], // size of the shadow
+                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
+                shadowAnchor: [12, 38],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			}
+		});
+
+    //Now we can create all three of our leaf icons from this class and use them:
+    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
+    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
+    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'});
+    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'});
+    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'});
+    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'});
+    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});
+</script>
+
+<!-- original marker, no status color changes
+<script>
+var <%#= @area.name %>      = yx(<%#= @area.coords %>);
+L.marker(<%#= @area.name %>).addTo(map).bindPopup('<h3><%#= @area.name %> - <%#= @area.status %></h3><p><%#= @area.info %></p>');
+</script>
+-->
+
+<script>
+var <%= 's' + @area.name.gsub(/\W\s?/, "") %>      = yx(<%= @area.coords %>);
+L.marker(<%= 's' + @area.name.gsub(/\W\s?/, "") %>, {<% if @area.status == 'Available' %>icon: redIcon<% elsif @area.status == 'Leased'  %>icon: greenIcon <% else %>icon: greenIcon <% end %>}).addTo(map).bindPopup('<h3><%= @area.name %> - <%= @area.status %></h3><p><%= @area.info %></p>');
+</script>
+
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>
 </div>
@@ -14,12 +138,19 @@
   <dd><%= @area.coords %></dd>
 </dl>
 
-<%= link_to t('.back', :default => t("helpers.links.back")),
-              areas_path, :class => 'btn btn-default'  %>
-<%= link_to t('.edit', :default => t("helpers.links.edit")),
-              edit_area_path(@area), :class => 'btn btn-default' %>
-<%= link_to t('.destroy', :default => t("helpers.links.destroy")),
-              area_path(@area),
-              :method => 'delete',
-              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-              :class => 'btn btn-danger' %>
+
+<hr style="clear:both;">
+	<div style="width:100%;text-align:center;">
+		<%= link_to '<= Back to Map',
+		              map_path(@map), :class => 'btn btn-default'  %>
+		<%= link_to 'Edit the Area =>',
+		              edit_area_path(@area), :class => 'btn btn-primary' %>
+		<%= link_to 'Delete the Area x',
+		              area_path(@area),
+		              :method => 'delete',
+		              :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
+		              :class => 'btn btn-danger' %>
+	</div>
+<hr style="clear:both;">
+
+<br><br>
