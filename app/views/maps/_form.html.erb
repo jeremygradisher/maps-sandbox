@@ -34,30 +34,19 @@
                 <%= link_to '<i class="fa fa-edit"></i>'.html_safe,
                       edit_image_path(p), :class => 'form-control-button', 
                       :title => 'Edit Attachment'  %>
-                <%#= link_to "Destroy Attachment", destroy_image_path(p) %>
-                <%#= link_to '<i class="fa fa-remove"></i>'.html_safe,
-                      image_path(p),
-                      :method => 'delete',
-                      :data => { :confirm => t('.confirm', :default => t("helpers.links.confirm", :default => 'Are you sure?')) },
-                      :class => 'form-control-button', :title => 'Delete Attachment'  %>
                 </div>
                 
           <% end %>
         </div>
     
     <% else %>  
-      <%#= f.fields_for :images do |p| %>
          <%= f.label :map_image, :class => 'control-label col-lg-2'  %>
          <div class="col-lg-10">
          <%= f.file_field :image, :multiple => true, name: "images[image][]", :class => 'form-control' %>
-
          </div>
-     <%# end %>
     <% end %>
   </div>  
   
-  
-
   <div class="form-group">
     <div class="col-lg-offset-2 col-lg-10">
       <%= f.submit nil, :class => 'btn btn-primary' %>
