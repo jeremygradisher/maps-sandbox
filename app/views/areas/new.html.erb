@@ -1,16 +1,11 @@
 <%- model_class = Area -%>
 
 <p>
-	*Adding a New Area is simple. Click on the map and you get a new marker. You can drag the marker around
-	to as well. Then name it, add what goes into the pop up with Info and change the status which will 
-	change the color of the marker.<br><br>
-	
-	**I was having an issue making the color change of the marker live on this page. 
-	I moved on but will need to address this in the long run.<br><br>
-	
-	***This uses a slightly different form than the edit form. It had to do with grabbing the map_id param
-	from the url so it undestood which map to use and save into the dbin the field map_id. 
-	Within the edit form the association is grabbed from the database field map_id.
+	*Adding a New Area is simple. Click within the bar on the left and choose the shape you would like to draw.
+	<br><br>
+	*My next move is to try and get those coords to show in the coords field below in the form. I am WIP there now.
+	<br><br>
+	**I don't quite understand it yet, but I am close. I need to be able to save those shapes and serve them back.
 </p>
 
 <div class="page-header">
@@ -52,53 +47,60 @@
 	//map.setView(xy(120, 70), 1);
     map.fitBounds(bounds);
 
-    var popup = L.popup();
-    
-    var marker = null;
-    
-    function onMapClick(e) {
-    	if (marker !== null) {
-        map.removeLayer(marker);
-    	}
-        marker = L.marker(e.latlng, {icon: lblueIcon, draggable: true}).addTo(map);
-       	document.getElementById('area_coords').value = e.latlng.lat + ', ' + e.latlng.lng;
-		marker.setLatLng(e.latlng);
-		updateLatLng(marker.getLatLng().lat, marker.getLatLng().lng);
-		function updateLatLng(lat,lng) {
-		document.getElementById('area_coords').value = e.latlng.lat + ', ' + e.latlng.lng;
-		//map.panTo([lat,lng]);
-		}
-		function onDragend(e) {
-    	document.getElementById('area_coords').value = marker.getLatLng().lat + ', ' + marker.getLatLng().lng;
-		}
-    	marker.on('dragend', onDragend);
-    }
-    
-    map.on('click', onMapClick);
+
 </script>
 
 <script>
-	//Let’s define our own icon class containing the shared options, 
-    //inheriting from L.Icon! It’s really easy in Leaflet:
-    var mapIcon = L.Icon.extend({
-			options: {
-				shadowUrl: '/images/marker-shadow.png',
-				iconSize:     [30, 45], // size of the icon
-                shadowSize:   [41, 41], // size of the shadow
-                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
-                shadowAnchor: [12, 38],  // the same for the shadow
-                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+var drawnItems = new L.FeatureGroup();
+		map.addLayer(drawnItems);
+
+		var drawControl = new L.Control.Draw({
+			draw: {
+				position: 'topleft',
+				polygon: {
+					title: 'Draw a sexy polygon!',
+					allowIntersection: false,
+					drawError: {
+						color: '#b00b00',
+						timeout: 1000
+					},
+					shapeOptions: {
+						color: '#bada55'
+					},
+					showArea: true
+				},
+				polyline: {
+					metric: false
+				},
+				circle: {
+					shapeOptions: {
+						color: '#662d91'
+					}
+				}
+			},
+			edit: {
+				featureGroup: drawnItems
 			}
 		});
+		map.addControl(drawControl);
 
-    //Now we can create all three of our leaf icons from this class and use them:
-    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
-    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
-    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'}),
-    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'}),
-    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'}),
-    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'}),
-    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});
+		map.on('draw:created', function (e) {
+			var type = e.layerType,
+				layer = e.layer;
+
+			if (type === 'marker') {
+				layer.bindPopup('A popup!');
+			}
+			
+			if (type === 'polygon') {
+				layer.bindPopup('OK - I can create a pop-up!!!');
+			}
+
+			drawnItems.addLayer(layer);
+			//trying some things here
+			alert(e.layer);
+			document.getElementById('area_coords').value = e.layer;
+		});
 </script>
 
 <hr style="clear:both;">

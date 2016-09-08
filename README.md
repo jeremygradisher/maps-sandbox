@@ -1,8 +1,15 @@
 #Maps Sandox
-Sandbox using Leaflet and leaflet.pm
+Sandbox using Leaflet and leaflet.draw
 This was rebuilt from https://github.com/jeremygradisher/leaflet-sandbox which was basically markers as opposed to areas.
 
+*I was going to use this:
 Adding leaflet.pm now! - http://codeofsumit.github.io/leaflet.pm/
+
+**But I changed my mind and went with:
+leaflet.draw - https://github.com/Leaflet/Leaflet.draw
+example: http://leaflet.github.io/Leaflet.draw/
+(More options, more documentation and more people using it)
+
 
 ---
 #If cloning this realize a couple of things:

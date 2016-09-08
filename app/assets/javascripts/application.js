@@ -14,4 +14,5 @@
 //= require jquery_ujs
 //= require twitter/bootstrap
 //= require leaflet
+//= require leaflet-draw
 //= require_tree .
