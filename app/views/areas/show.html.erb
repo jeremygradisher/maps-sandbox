@@ -88,27 +88,11 @@
 </script>
 
 <script>
-	//Let’s define our own icon class containing the shared options, 
-    //inheriting from L.Icon! It’s really easy in Leaflet:
-    var mapIcon = L.Icon.extend({
-			options: {
-				shadowUrl: '/images/marker-shadow.png',
-				iconSize:     [30, 45], // size of the icon
-                shadowSize:   [41, 41], // size of the shadow
-                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
-                shadowAnchor: [12, 38],  // the same for the shadow
-                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-			}
-		});
+//var geojsonFeature = {"type":"Feature","properties":{},"geometry":{"type":"Polygon","coordinates":[[[48,669.625],[180,671.625],[178,537.625],[44,535.625],[48,669.625]]]}};
 
-    //Now we can create all three of our leaf icons from this class and use them:
-    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
-    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
-    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'});
-    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'});
-    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'});
-    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'});
-    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});
+var geojsonFeature = <%= @area.coords.html_safe %>;
+
+L.geoJson(geojsonFeature).addTo(map);
 </script>
 
 <!-- original marker, no status color changes
@@ -118,10 +102,13 @@ L.marker(<%#= @area.name %>).addTo(map).bindPopup('<h3><%#= @area.name %> - <%#=
 </script>
 -->
 
+<!--
+This is similiar to what I will need to do, do not delete until!......
 <script>
-var <%= 's' + @area.name.gsub(/\W\s?/, "") %>      = yx(<%= @area.coords %>);
-L.marker(<%= 's' + @area.name.gsub(/\W\s?/, "") %>, {<% if @area.status == 'Available' %>icon: redIcon<% elsif @area.status == 'Leased'  %>icon: greenIcon <% else %>icon: greenIcon <% end %>}).addTo(map).bindPopup('<h3><%= @area.name %> - <%= @area.status %></h3><p><%= @area.info %></p>');
+var <%#= 's' + @area.name.gsub(/\W\s?/, "") %>      = yx(<%#= @area.coords %>);
+L.marker(<%#= 's' + @area.name.gsub(/\W\s?/, "") %>, {<%# if @area.status == 'Available' %>icon: redIcon<%# elsif @area.status == 'Leased'  %>icon: greenIcon <%# else %>icon: greenIcon <%# end %>}).addTo(map).bindPopup('<h3><%#= @area.name %> - <%#= @area.status %></h3><p><%#= @area.info %></p>');
 </script>
+-->
 
 <div class="page-header">
   <h1><%=t '.title', :default => model_class.model_name.human.titleize %></h1>

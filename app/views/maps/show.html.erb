@@ -3,7 +3,8 @@
 <p>
   *Maps#show - This is an individual Map show page. It acts as an index of the Areas that belong to this Map instance.
   <br><br>
-  *Currently you can click the New Area button to see that I have leaflet.draw integrated. I have yet to figure out how to save a drawn shape to the database and get the shape again when needed on a map.
+  *Go ahead and add or edit a shape! - Need to change colors by status and be able to click through the area!!!
+  
 </p>
 
 <h1 style="text-align:center;"><%= @map.name %></h1>
@@ -97,47 +98,15 @@
     map.on('click', onMapClick);
 </script>
 
-<!-- original markers no colors
-<script>
-<%# @areas.each do |area| %>
-var <%#= area.name %>      = yx(<%#= area.coords %>);
-L.marker(<%#= area.name %>).addTo(map).bindPopup('<h3><%#= area.name %> - <%#= area.status %></h3><p><%#= area.info %></p>');
-<%# end %>
-</script>
--->
-
-<script>
-	//Let’s define our own icon class containing the shared options, 
-    //inheriting from L.Icon! It’s really easy in Leaflet:
-    var mapIcon = L.Icon.extend({
-			options: {
-				shadowUrl: '/images/marker-shadow.png',
-				iconSize:     [30, 45], // size of the icon
-                shadowSize:   [41, 41], // size of the shadow
-                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
-                shadowAnchor: [12, 38],  // the same for the shadow
-                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
-			}
-		});
-
-    //Now we can create all three of our leaf icons from this class and use them:
-    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
-    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
-    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'});
-    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'});
-    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'});
-    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'});
-    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});
-</script>
-
-
-
 <script>
 <% @areas.each do |area| %>
-var <%= 's' + area.name.gsub(/\W\s?/, "") %>      = yx(<%= area.coords %>);
-L.marker(<%= 's' + area.name.gsub(/\W\s?/, "") %>, {<% if area.status == 'Available' %>icon: redIcon<% elsif area.status == 'Leased'  %>icon: greenIcon<% else %>icon: lblueIcon <% end %>}).addTo(map).bindPopup('<h3><%= link_to area.name, area_path(area) %> - <%= area.status %></h3><p><%= area.info %></p>');
+var <%= 's' + area.name.gsub(/\W\s?/, "") %> = <%= area.coords.html_safe %>;
+
+L.geoJson(<%= 's' + area.name.gsub(/\W\s?/, "") %>).addTo(map);
 <% end %>
 </script>
+
+
 
 <br style="clear:both;">
 

@@ -89,60 +89,65 @@
 </script>
 
 <script>
-	//Let’s define our own icon class containing the shared options, 
-    //inheriting from L.Icon! It’s really easy in Leaflet:
-    var mapIcon = L.Icon.extend({
-			options: {
-				shadowUrl: '/images/marker-shadow.png',
-				iconSize:     [30, 45], // size of the icon
-                shadowSize:   [41, 41], // size of the shadow
-                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
-                shadowAnchor: [12, 38],  // the same for the shadow
-                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+var <%= 's' + @area.name.gsub(/\W\s?/, "") %> = <%= @area.coords.html_safe %>;
+
+//L.geoJson(<%#= 's' + @area.name.gsub(/\W\s?/, "") %>).addTo(map);
+</script>
+
+<script>
+	// Initialise the FeatureGroup to store editable layers
+	var drawnItems = L.geoJson(<%= 's' + @area.name.gsub(/\W\s?/, "") %>);
+	map.addLayer(drawnItems);
+
+	// Initialise and alter the draw control and pass it the FeatureGroup of editable layers
+	var drawControl = new L.Control.Draw({
+		draw: {
+			//These options make up the root object that is used when initialising the Leaflet.draw control.
+			position: 'topleft',
+			polygon: {
+				title: 'Draw a sexy polygon!',
+				allowIntersection: false,
+				drawError: {
+					color: '#b00b00',
+					timeout: 1000
+				},
+				shapeOptions: {
+					color: '#bada55'
+				},
+				showArea: true
+			},
+			polyline: {
+				metric: false
+			},
+			circle: {
+				shapeOptions: {
+					color: '#662d91'
+				}
 			}
-		});
-
-    //Now we can create all three of our leaf icons from this class and use them:
-    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
-    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
-    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'});
-    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'});
-    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'});
-    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'});
-    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});
-</script>
-
-
-
-
-
-<script>
-//var suite401      = yx(604, 107);
-var <%= 's' + @area.name.gsub(/\W\s?/, "") %>      = yx(<%= @area.coords %>);
-//L.marker(suite401).addTo(map).bindPopup('Suite 401');
-var marker = L.marker(<%= 's' + @area.name.gsub(/\W\s?/, "") %>, {<% if @area.status == 'Available' %>icon: redIcon<% elsif @area.status == 'Leased'  %>icon: greenIcon<% else %>icon: greenIcon<% end %>, draggable: true}).addTo(map).bindPopup('<h3><%= @area.name %> - <%= @area.status %></h3><p><%= @area.info %></p>');
-</script>
-
-<script>
-
-
-	function onMapClick(e) {
-    document.getElementById('area_coords').value = e.latlng.lat + ', ' + e.latlng.lng;
-		marker.setLatLng(e.latlng);
-		updateLatLng(marker.getLatLng().lat, marker.getLatLng().lng);
-		function updateLatLng(lat,lng) {
-		document.getElementById('area_coords').value = e.latlng.lat + ', ' + e.latlng.lng;
-		map.panTo([lat,lng]);
+		},
+		edit: {
+			featureGroup: drawnItems
 		}
-    }
-    map.on('click', onMapClick);
-    
-	function onDragend(e) {
-		document.getElementById('area_coords').value = marker.getLatLng().lat + ', ' + marker.getLatLng().lng;
-	}
-    marker.on('dragend', onDragend);
-</script>
+	});
+	map.addControl(drawControl);
 
+
+	//draw:created - Triggered when a new vector or marker has been created.
+	map.on('draw:edited', function (e) {
+		var layers = e.layers;
+    layers.eachLayer(function (layer) {
+        //do whatever you want, most likely save back to db
+      //var type = e.layerType,
+			//layer = e.layer;
+		
+			var shape = layer.toGeoJSON()
+  		var shape_for_db = JSON.stringify(shape);
+
+			document.getElementById('area_coords').value = shape_for_db;
+    });
+
+	});
+</script>
 
 <hr style="clear:both;">
 

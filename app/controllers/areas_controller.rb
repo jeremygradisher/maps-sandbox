@@ -10,7 +10,6 @@ class AreasController < ApplicationController
   # GET /areas/1
   # GET /areas/1.json
   def show
-    
     @map = Map.find(@area.map_id)
     #added this so I can get the image to be used as the map
     @image = @map.images.first

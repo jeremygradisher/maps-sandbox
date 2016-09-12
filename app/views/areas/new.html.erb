@@ -51,56 +51,67 @@
 </script>
 
 <script>
-var drawnItems = new L.FeatureGroup();
-		map.addLayer(drawnItems);
+	// Initialise the FeatureGroup to store editable layers
+	var drawnItems = new L.FeatureGroup();
+	map.addLayer(drawnItems);
 
-		var drawControl = new L.Control.Draw({
-			draw: {
-				position: 'topleft',
-				polygon: {
-					title: 'Draw a sexy polygon!',
-					allowIntersection: false,
-					drawError: {
-						color: '#b00b00',
-						timeout: 1000
-					},
-					shapeOptions: {
-						color: '#bada55'
-					},
-					showArea: true
+	// Initialise and alter the draw control and pass it the FeatureGroup of editable layers
+	var drawControl = new L.Control.Draw({
+		draw: {
+			//These options make up the root object that is used when initialising the Leaflet.draw control.
+			position: 'topleft',
+			polygon: {
+				title: 'Draw a sexy polygon!',
+				allowIntersection: false,
+				drawError: {
+					color: '#b00b00',
+					timeout: 1000
 				},
-				polyline: {
-					metric: false
+				shapeOptions: {
+					color: '#bada55'
 				},
-				circle: {
-					shapeOptions: {
-						color: '#662d91'
-					}
-				}
+				showArea: true
 			},
-			edit: {
-				featureGroup: drawnItems
+			polyline: {
+				metric: false
+			},
+			circle: {
+				shapeOptions: {
+					color: '#662d91'
+				}
 			}
-		});
-		map.addControl(drawControl);
+		},
+		edit: {
+			featureGroup: drawnItems
+		}
+	});
+	map.addControl(drawControl);
 
-		map.on('draw:created', function (e) {
-			var type = e.layerType,
-				layer = e.layer;
 
-			if (type === 'marker') {
-				layer.bindPopup('A popup!');
-			}
-			
-			if (type === 'polygon') {
-				layer.bindPopup('OK - I can create a pop-up!!!');
-			}
+	//draw:created - Triggered when a new vector or marker has been created.
+	map.on('draw:created', function (e) {
+		var type = e.layerType,
+			layer = e.layer;
+		
+		var shape = layer.toGeoJSON()
+  		var shape_for_db = JSON.stringify(shape);
 
-			drawnItems.addLayer(layer);
-			//trying some things here
-			alert(e.layer);
-			document.getElementById('area_coords').value = e.layer;
-		});
+		if (type === 'marker') {
+			layer.bindPopup('A popup!');
+		}
+		
+		if (type === 'polygon') {
+			layer.bindPopup('OK - I can create a pop-up!!!');
+		}
+
+		drawnItems.addLayer(layer);
+		//trying some things here
+
+
+		
+		//alert(shape_for_db);
+		document.getElementById('area_coords').value = shape_for_db;
+	});
 </script>
 
 <hr style="clear:both;">
