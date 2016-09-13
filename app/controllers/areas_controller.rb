@@ -68,7 +68,7 @@ class AreasController < ApplicationController
   def destroy
     @area.destroy
     respond_to do |format|
-      format.html { redirect_to areas_url, notice: 'Area was successfully destroyed.' }
+      format.html { redirect_to map_path(@area.map_id), notice: 'Area was successfully destroyed.' }
       format.json { head :no_content }
     end
   end
