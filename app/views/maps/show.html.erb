@@ -68,7 +68,7 @@
       <th><%= model_class.human_attribute_name(:info) %></th>
       <th><%= model_class.human_attribute_name(:status) %></th>
       <!--<th><%#= model_class.human_attribute_name(:coords) %></th>-->
-      <th><%= model_class.human_attribute_name(:created_at) %></th>
+      <!--<th><%#= model_class.human_attribute_name(:created_at) %></th>-->
       <th><%=t '.actions', :default => t("helpers.actions") %></th>
     </tr>
   </thead>
@@ -78,11 +78,11 @@
         <td><%= link_to area.id, area_path(area) %></td>
         <td><%= link_to area.name, area_path(area) %></td>
         <td><%= area.map_id %></td>
-        <td><%= area.info %></td>
+        <td style="max-width:40%;"><%= area.info %></td>
         <td><%= area.status %></td>
         <!--<td><%#= area.coords %></td>-->
-        <td><%=l area.created_at %></td>
-        <td>
+        <!--<td><%#=l area.created_at %></td>-->
+        <td style="min-width:180px;">
           <%= link_to t('.view', :default => t("helpers.links.view")),
                       area_path(area), :class => 'btn btn-default btn-xs' %>
           <%= link_to t('.edit', :default => t("helpers.links.edit")),
