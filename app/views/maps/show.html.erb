@@ -44,7 +44,6 @@
 
     var popup = L.popup();
     
-
     <% @areas.each do |area| %>
         var <%= 's' + area.name.gsub(/\W\s?/, "") %> = <%= area.coords.html_safe %>;
         

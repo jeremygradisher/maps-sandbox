@@ -42,6 +42,12 @@
 
 	//map.setView(xy(120, 70), 1);
     map.fitBounds(bounds);
+    
+    <% @areas.each do |area| %>
+        var <%= 's' + area.name.gsub(/\W\s?/, "") %> = <%= area.coords.html_safe %>;
+        
+        L.geoJson(<%= 's' + area.name.gsub(/\W\s?/, "") %>).addTo(map).setStyle({fillColor: '#dddd00', color: '#dddd00', weight: 1});
+    <% end %>
 
 
     var popup = L.popup();
@@ -55,6 +61,8 @@
 	// Initialise the FeatureGroup to store editable layers
 	var drawnItems = L.geoJson(<%= 's' + @area.name.gsub(/\W\s?/, "") %>);
 	map.addLayer(drawnItems);
+	
+	drawnItems.setStyle({<% if @area.status == 'Leased' %>fillColor: '#00dd00', color: '#00dd00', weight: 1<% else %>fillColor: '#dd0000', color: '#dd0000', weight: 1<% end %>});
 
 	// Initialise and alter the draw control and pass it the FeatureGroup of editable layers
 	var drawControl = new L.Control.Draw({
@@ -65,11 +73,12 @@
 				title: 'Draw a sexy polygon!',
 				allowIntersection: false,
 				drawError: {
-					color: '#b00b00',
+					color: '#00dd00',
 					timeout: 1000
 				},
 				shapeOptions: {
-					color: '#bada55'
+					color: '#00dd00',
+					weight: 1
 				},
 				showArea: true
 			},
@@ -88,6 +97,7 @@
 	});
 	map.addControl(drawControl);
 
+	
 
 	//draw:created - Triggered when a new vector or marker has been created.
 	map.on('draw:edited', function (e) {

@@ -23,6 +23,7 @@ class AreasController < ApplicationController
     @map = Map.find(params[:map_id])
     @image = @map.images.first
     @images = @map.images.all
+    @areas = @map.areas.all
   end
 
   # GET /areas/1/edit
@@ -31,16 +32,18 @@ class AreasController < ApplicationController
     #added this so I can get the image to be used as the map
     @image = @map.images.first
     @images = @map.images.all
+    @areas = @map.areas.all
   end
 
   # POST /areas
   # POST /areas.json
   def create
     @area = Area.new(area_params)
+    @map = Map.find(@area.map_id)
 
     respond_to do |format|
       if @area.save
-        format.html { redirect_to @area, notice: 'Area was successfully created.' }
+        format.html { redirect_to map_url(@map), notice: 'Area was successfully created.' }
         format.json { render :show, status: :created, location: @area }
       else
         format.html { render :new }
@@ -52,9 +55,11 @@ class AreasController < ApplicationController
   # PATCH/PUT /areas/1
   # PATCH/PUT /areas/1.json
   def update
+    @map = Map.find(@area.map_id)
+    
     respond_to do |format|
       if @area.update(area_params)
-        format.html { redirect_to @area, notice: 'Area was successfully updated.' }
+        format.html { redirect_to map_url(@map), notice: 'Area was successfully updated.' }
         format.json { render :show, status: :ok, location: @area }
       else
         format.html { render :edit }

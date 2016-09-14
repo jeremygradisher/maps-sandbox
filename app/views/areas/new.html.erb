@@ -1,11 +1,9 @@
 <%- model_class = Area -%>
 
 <p>
-	*Adding a New Area is simple. Click within the bar on the left and choose the shape you would like to draw.
+	*Adding a New Area is simple. Click within the bar on the left and choose the shape you would like to draw. (Polygon!)
 	<br><br>
-	*My next move is to try and get those coords to show in the coords field below in the form. I am WIP there now.
-	<br><br>
-	**I don't quite understand it yet, but I am close. I need to be able to save those shapes and serve them back.
+	*My next move is to refine the bar on the right and loose what I do not need.
 </p>
 
 <div class="page-header">
@@ -47,13 +45,18 @@
 	//map.setView(xy(120, 70), 1);
     map.fitBounds(bounds);
 
-
+    <% @areas.each do |area| %>
+        var <%= 's' + area.name.gsub(/\W\s?/, "") %> = <%= area.coords.html_safe %>;
+        
+        L.geoJson(<%= 's' + area.name.gsub(/\W\s?/, "") %>).addTo(map).setStyle({fillColor: '#dddd00', color: '#dddd00', weight: 1});
+    <% end %>
 </script>
 
 <script>
 	// Initialise the FeatureGroup to store editable layers
 	var drawnItems = new L.FeatureGroup();
 	map.addLayer(drawnItems);
+
 
 	// Initialise and alter the draw control and pass it the FeatureGroup of editable layers
 	var drawControl = new L.Control.Draw({
@@ -64,28 +67,31 @@
 				title: 'Draw a sexy polygon!',
 				allowIntersection: false,
 				drawError: {
-					color: '#b00b00',
+					color: '#00dd00',
 					timeout: 1000
 				},
 				shapeOptions: {
-					color: '#bada55'
+					color: '#00dd00',
+				weight: 1
 				},
 				showArea: true
 			},
-			polyline: {
-				metric: false
-			},
-			circle: {
+			polyline:  false,
+			rectangle:  {
 				shapeOptions: {
-					color: '#662d91'
+					color: '#00dd00',
+				weight: 1
 				}
-			}
+			},
+			circle: false
 		},
 		edit: {
 			featureGroup: drawnItems
 		}
 	});
 	map.addControl(drawControl);
+	
+	
 
 
 	//draw:created - Triggered when a new vector or marker has been created.
@@ -95,14 +101,6 @@
 		
 		var shape = layer.toGeoJSON()
   		var shape_for_db = JSON.stringify(shape);
-
-		if (type === 'marker') {
-			layer.bindPopup('A popup!');
-		}
-		
-		if (type === 'polygon') {
-			layer.bindPopup('OK - I can create a pop-up!!!');
-		}
 
 		drawnItems.addLayer(layer);
 		//trying some things here
