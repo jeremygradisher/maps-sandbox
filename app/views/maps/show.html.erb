@@ -44,10 +44,38 @@
 
     var popup = L.popup();
     
+	//Let’s define our own icon class containing the shared options, 
+    //inheriting from L.Icon! It’s really easy in Leaflet:
+    var mapIcon = L.Icon.extend({
+			options: {
+				shadowUrl: '/images/marker-shadow.png',
+				iconSize:     [30, 45], // size of the icon
+                shadowSize:   [41, 41], // size of the shadow
+                iconAnchor:   [15, 43], // point of the icon which will correspond to marker's location
+                shadowAnchor: [12, 38],  // the same for the shadow
+                popupAnchor:  [-3, -76] // point from which the popup should open relative to the iconAnchor
+			}
+		});
+
+    //Now we can create all three of our leaf icons from this class and use them:
+    var greenIcon = new mapIcon({iconUrl: '/images/green-marker.png'}),
+    redIcon = new mapIcon({iconUrl: '/images/red-marker.png'}),
+    orangeIcon = new mapIcon({iconUrl: '/images/orange-marker.png'}),
+    blueIcon = new mapIcon({iconUrl: '/images/blue-marker.png'}),
+    lblueIcon = new mapIcon({iconUrl: '/images/lblue-marker.png'}),
+    blackIcon = new mapIcon({iconUrl: '/images/black-marker.png'}),
+    yellowIcon = new mapIcon({iconUrl: '/images/yellow-marker.png'});    
+    
+    
     <% @areas.each do |area| %>
         var <%= 's' + area.name.gsub(/\W\s?/, "") %> = <%= area.coords.html_safe %>;
         
-        L.geoJson(<%= 's' + area.name.gsub(/\W\s?/, "") %>).addTo(map).bindPopup('<h3><%= link_to area.name, area_path(area) %></h3><p><%= area.info %><br><%= link_to "More Info...", area_path(area) %></p>').setStyle(<% if area.status == 'Leased' %>{fillColor: '#00dd00', color: '#00dd00', weight: 1}<% else %>{fillColor: '#dd0000', color: '#dd0000', weight: 1}<% end %>);
+        L.geoJson(<%= 's' + area.name.gsub(/\W\s?/, "") %>, {
+        pointToLayer: function (feature, latlng) {
+        return L.marker(latlng, {<% if area.status == 'Available' %>icon: redIcon<% elsif area.status == 'Leased'  %>icon: greenIcon<% else %>icon: lblueIcon <% end %>});
+        }}).addTo(map).bindPopup('<h3><%= link_to area.name, area_path(area) %></h3><p><%= area.info %><br><%= link_to "More Info...", area_path(area) %></p>').setStyle(<% if area.status == 'Leased' %>{fillColor: '#00dd00', color: '#00dd00', weight: 1}<% else %>{fillColor: '#dd0000', color: '#dd0000', weight: 1}<% end %>);
+
+    
     <% end %>
 </script>
 
