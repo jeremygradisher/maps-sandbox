@@ -10,12 +10,12 @@ example: http://leaflet.github.io/Leaflet.draw/
 
 -it's using sqlite3 in development and PostgreSQL in production (gemfile)
 
--it uses AWS for file storage - just needs an S3 bucket and credentials<br>
+-it uses AWS for file storage - just needs an S3 bucket and credentials (Helper notes below)<br>
 $ heroku config:set S3_ACCESS_KEY=xxxxxxxxxxxxxxxxxx<br>
 $ heroku config:set S3_SECRET_KEY=xxxxxxxxxxxxxxxxxx<br>
 $ heroku config:set S3_BUCKET=xxxxxxxxxxxxxxxxxx
 
--it uses imagemagick for getting the width/height on upload
+-it uses imagemagick for getting the width/height of the maps on upload (Helper notes below)
 
 ---
 
@@ -96,7 +96,7 @@ end<br>
 
 ---
 #imagemagick notes
-###I had issues getting imagemagick to work - here it what helped:<br>
+###I had issues getting imagemagick to work - here is what helped:<br>
 79. needed imagemagick for getting width/height on upload<br>
   1. Update apt-get packages inside the C9 terminal<br>
   $ sudo apt-get update <br>
