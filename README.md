@@ -19,7 +19,7 @@ $ heroku config:set S3_BUCKET=xxxxxxxxxxxxxxxxxx
 
 ---
 
-#Amazon AWS
+#Amazon/AWS notes
 75. Sign up for Amazon web services at aws.amazon.com<br>
 Follow the video exactly as shown:<br>
     1) Create IAM user and grab the keys:<br>
@@ -93,3 +93,16 @@ if Rails.env.production?<br>
         config.fog_directory = ENV['S3_BUCKET']<br>
     end<br>
 end<br>
+
+---
+#imagemagick notes
+###I had issues getting imagemagick to work - here it what helped:<br>
+79. needed imagemagick for getting width/height on upload<br>
+  1. Update apt-get packages inside the C9 terminal<br>
+  $ sudo apt-get update <br>
+
+  2. Install imagemagick command-line tools via apt-get<br>
+  $ sudo apt-get install imagemagick<br>
+
+80. shelling out manually:<br>
+https://github.com/carrierwaveuploader/carrierwave/wiki/How-to:-Get-image-dimensions
