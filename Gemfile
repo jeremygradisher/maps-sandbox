@@ -2,7 +2,8 @@ source 'https://rubygems.org'
 
 
 # Bundle edge Rails instead: gem 'rails', github: 'rails/rails'
-gem 'rails', '4.2.5'
+gem 'rails', '~> 5.0.0'
+ruby '2.6.3'
 #Adding gems...
 gem 'devise'
 gem 'twitter-bootstrap-rails'
@@ -15,9 +16,9 @@ gem 'sass-rails', '~> 5.0'
 gem 'uglifier', '>= 1.3.0'
 # Use CoffeeScript for .coffee assets and views
 gem 'coffee-rails', '~> 4.1.0'
-gem 'carrierwave'
-gem 'mini_magick'
-gem 'fog'
+gem 'carrierwave', '~> 2.0'
+gem 'mini_magick', '4.9.5'
+gem 'fog-aws'
 # See https://github.com/rails/execjs#readme for more supported runtimes
 # gem 'therubyracer', platforms: :ruby
 
@@ -41,7 +42,7 @@ gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
-  gem 'sqlite3'  
+  gem 'sqlite3', '~> 1.3.6'  
   gem 'byebug'
 end
 
