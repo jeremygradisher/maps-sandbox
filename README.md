@@ -1,4 +1,6 @@
 #Maps Sandox
+Got rid of some vulnerabilities 01/05/2020
+THis is where the mapping with Leaflet started.
 Sandbox using Leaflet and leaflet.draw to create Maps/Areas
 This was rebuilt from https://github.com/jeremygradisher/leaflet-sandbox which was basically markers as opposed to areas.
 
@@ -17,7 +19,7 @@ $ heroku config:set S3_BUCKET=xxxxxxxxxxxxxxxxxx
 
 -it uses imagemagick for getting the width/height of the maps on upload (Helper notes below)
 
----
+```
 
 #Amazon/AWS notes
 75. Sign up for Amazon web services at aws.amazon.com<br>
@@ -94,9 +96,10 @@ if Rails.env.production?<br>
     end<br>
 end<br>
 
----
+```
 #imagemagick notes
 ###I had issues getting imagemagick to work - here is what helped:<br>
+```
 79. needed imagemagick for getting width/height on upload<br>
   1. Update apt-get packages inside the C9 terminal<br>
   $ sudo apt-get update <br>
@@ -106,3 +109,4 @@ end<br>
 
 80. shelling out manually:<br>
 https://github.com/carrierwaveuploader/carrierwave/wiki/How-to:-Get-image-dimensions
+```
