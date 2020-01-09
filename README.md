@@ -1,4 +1,6 @@
-#Maps Sandox
+# Maps Sandox
+
+## This was where I learned clicks saving coords to db
 Got rid of some vulnerabilities 01/05/2020
 THis is where the mapping with Leaflet started.
 Sandbox using Leaflet and leaflet.draw to create Maps/Areas
